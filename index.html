@@ -10,22 +10,18 @@
 	<input type="number" step="0.01" min="0" id="documentWidth"><br>
 	<label for="documentHeight">Height</label><br>
 	<input type="number" step="0.01" min="0" id="documentHeight"><br>
-	<input type="file" id="file" name="file" onchange="previewFile()"><br>
+	<input type="file" id="file" name="file" onchange="refreshTemplate()"><br>
 </div>
 
 <div id="variants" class="container">
 	<p><b>Variants</b></p>
-	<button type="button" onclick="addVariant()">Add Export Variant</button><br>
+	<button type="button" onclick="addVariant()">Add Export Variant</button>
+	<button type="button" onclick="download()">Download All</button>
 </div>
 
 <div id="qrCodePlacements" class="container">
 	<p><b>Placements</b></p>
 	<button type="button" onclick="addQRCode()">Add QR Code Placement</button><br>
-</div>
-
-<div class="container">
-	<button type="button" onclick="refresh()">Refresh</button>
-	<button type="button" onclick="download()">Download</button>
 </div>
 
 <div id="page">
@@ -51,9 +47,27 @@
 		margin: 8px;
 	}
 
+	.column
+	{
+		float: left;
+		width: 50%;
+	}
+
+	.row:after
+	{
+		content: "";
+		display: table;
+		clear: both;
+	}
+
 	.qrCode
 	{
 		position: relative;
+	}
+
+	input
+	{
+		min-width: 600px;
 	}
 
 	#page
@@ -85,15 +99,49 @@
 	{
 		variants++;
 		let id = variants;
-		let content = '<div id="variant-' + id + '" class="qrCodeContainer">';
-		content += '<label for="variant-' + id + '-name">Name</label>'
-		content += '<input type="text" id="variant-' + id + '-name"><br>'
-		content += '<label for="variant-' + id + '-data">Data</label>';
-		content += '<input type="text" id="variant-' + id + '-data" name="variant-' + id + '-data">';
-		content += '<button type="button" onclick="generate(' + id + ')">Generate QR Code</button>';
-		content += '<div id="variant-' + id + '-source"></div>';
-		content += '</div>'
-		document.getElementById('variants').innerHTML += content;
+
+		let div = document.createElement('div');
+		div.id = "variant-" + id;
+		div.classList.add('qrCodeContainer');
+		div.classList.add('row');
+
+		let leftColumn = document.createElement('div');
+		leftColumn.classList.add('column');
+		div.appendChild(leftColumn);
+
+		let nameLabel = document.createElement('label');
+		nameLabel.for = "variant-" + id + "-name"
+		nameLabel.innerHTML = "Name";
+		leftColumn.appendChild(nameLabel);
+
+		let nameInput = document.createElement('input');
+		nameInput.id = "variant-" + id + "-name";
+		nameInput.type = "text";
+		leftColumn.appendChild(nameInput);
+
+		leftColumn.appendChild(document.createElement('br'));
+
+		let dataLabel = document.createElement('label');
+		dataLabel.for = "variant-" + id + "-data"
+		dataLabel.innerHTML = "Data";
+		leftColumn.appendChild(dataLabel);
+
+		let dataInput = document.createElement('input');
+		dataInput.id = "variant-" + id + "-data";
+		dataInput.type = "text";
+		dataInput.onchange = function() { generate(id); };
+		leftColumn.appendChild(dataInput);
+
+		let rightColumn = document.createElement('div');
+		rightColumn.classList.add('column');
+		div.appendChild(rightColumn);
+
+		let sourceDiv = document.createElement('div');
+		sourceDiv.id = "variant-" + id + "-source";
+		sourceDiv.classList.add('qr-source-container');
+		rightColumn.appendChild(sourceDiv);
+
+		document.getElementById('variants').appendChild(div);
 	}
 
 	function addQRCode()
@@ -102,11 +150,11 @@
 		let id = qrCodes;
 		let content = '<div id="qrCodePlacement-' + id + '" class="qrCodeContainer">';
 		content += '<label for="qrCodeSize-' + id + '">Size (inches)</label>';
-		content += '<input type="number" step="0.01" min="0" id="qrCodeSize-' + id + '"><br>';
+		content += '<input type="number" step="0.01" min="0" onchange="refresh()" id="qrCodeSize-' + id + '"><br>';
 		content += '<label for="qrCodeX-' + id + '">X: </label>';
-		content += '<input type="number" step="0.01" min="0" id="qrCodeX-' + id + '"><br>';
+		content += '<input type="number" step="0.01" min="0" onchange="refresh()" id="qrCodeX-' + id + '"><br>';
 		content += '<label for="qrCodeY-' + id + '">Y: </label>';
-		content += '<input type="number" step="0.01" min="0" id="qrCodeY-' + id + '"><br>';
+		content += '<input type="number" step="0.01" min="0" onchange="refresh()" id="qrCodeY-' + id + '"><br>';
 		content += '</div>'
 		document.getElementById('qrCodePlacements').innerHTML += content;
 	}
@@ -122,15 +170,15 @@
 
 		let qrCodeRaw = new QRCode(parent, {
 			text: data,
-			width: 128,
-			height: 128,
+			width: 40,
+			height: 40,
 			colorDark : "#111",
 			colorLight : "#fff",
 			correctLevel : QRCode.CorrectLevel.H
 		});
 	}
 
-	function previewFile()
+	function refreshTemplate()
 	{
 		var preview = document.getElementById('preview');
 		var file    = document.querySelector('input[type=file]').files[0];
@@ -157,8 +205,6 @@
 		page.style.width = documentWidth + "in";
 		page.style.height = documentHeight + "in";
 
-		let src = document.querySelector('#variant-1-source img').getAttribute("src");
-
 		for (let i = 1; i < qrCodes + 1; i++)
 		{
 			let id = "qrCode-" + i;
@@ -172,7 +218,7 @@
 		for (let i = 1; i < qrCodes + 1; i++)
 		{
 			let id = "qrCode-" + i;
-			let content = '<img id="' + id + '" src="' + src + '" alt="QR Code">';
+			let content = '<div id="' + id + '" style="background: #f00;"></div>';
 			let size = document.getElementById('qrCodeSize-' + i).value;
 			let x = document.getElementById('qrCodeX-' + i).value;
 			let y = document.getElementById('qrCodeY-' + i).value;
