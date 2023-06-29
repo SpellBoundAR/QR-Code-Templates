@@ -60,6 +60,11 @@
 		clear: both;
 	}
 
+	.qr-source-container
+	{
+		display: none;
+	}
+
 	.qrCode
 	{
 		position: relative;
@@ -148,15 +153,55 @@
 	{
 		qrCodes++;
 		let id = qrCodes;
-		let content = '<div id="qrCodePlacement-' + id + '" class="qrCodeContainer">';
-		content += '<label for="qrCodeSize-' + id + '">Size (inches)</label>';
-		content += '<input type="number" step="0.01" min="0" onchange="refresh()" id="qrCodeSize-' + id + '"><br>';
-		content += '<label for="qrCodeX-' + id + '">X: </label>';
-		content += '<input type="number" step="0.01" min="0" onchange="refresh()" id="qrCodeX-' + id + '"><br>';
-		content += '<label for="qrCodeY-' + id + '">Y: </label>';
-		content += '<input type="number" step="0.01" min="0" onchange="refresh()" id="qrCodeY-' + id + '"><br>';
-		content += '</div>'
-		document.getElementById('qrCodePlacements').innerHTML += content;
+
+		let div = document.createElement('div');
+		div.id = "qrCodePlacement-" + id;
+		div.classList.add('qrCodeContainer');
+
+		let sizeLabel = document.createElement('label');
+		sizeLabel.for = "qrCodeSize-" + id;
+		sizeLabel.innerHTML = "Size:";
+		div.appendChild(sizeLabel);
+
+		let sizeInput = document.createElement('input');
+		sizeInput.id = "qrCodeSize-" + id;
+		sizeInput.type = "number";
+		sizeInput.step = 0.01;
+		sizeInput.min = 0;
+		sizeInput.onchange = function() { refresh(); };
+		div.appendChild(sizeInput);
+
+		div.appendChild(document.createElement('br'));
+
+		let xLabel = document.createElement('label');
+		xLabel.for = "qrCodeX-" + id;
+		xLabel.innerHTML = "X:";
+		div.appendChild(xLabel);
+
+		let xInput = document.createElement('input');
+		xInput.id = "qrCodeX-" + id;
+		xInput.type = "number";
+		xInput.step = 0.01;
+		xInput.min = 0;
+		xInput.onchange = function() { refresh(); };
+		div.appendChild(xInput);
+
+		div.appendChild(document.createElement('br'));
+
+		let yLabel = document.createElement('label');
+		yLabel.for = "qrCodeY-" + id;
+		yLabel.innerHTML = "Y:";
+		div.appendChild(yLabel);
+
+		let yInput = document.createElement('input');
+		yInput.id = "qrCodeY-" + id;
+		yInput.type = "number";
+		yInput.step = 0.01;
+		yInput.min = 0;
+		yInput.onchange = function() { refresh(); };
+		div.appendChild(yInput);
+
+		document.getElementById('qrCodePlacements').appendChild(div);
 	}
 
 	function generate(id)
@@ -170,8 +215,8 @@
 
 		let qrCodeRaw = new QRCode(parent, {
 			text: data,
-			width: 40,
-			height: 40,
+			width: 256,
+			height: 256,
 			colorDark : "#111",
 			colorLight : "#fff",
 			correctLevel : QRCode.CorrectLevel.H
