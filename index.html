@@ -15,7 +15,9 @@
 
 <div id="variants" class="container">
 	<p><b>Variants</b></p>
-	<button type="button" onclick="addVariant()">Add Export Variant</button>
+	<input id="rawDataInput" type="text">
+	<button type="button" onclick="parseRawData()">Parse Raw Data</button><br><br>
+	<button type="button" onclick="addVariant(null, null)">Add Export Variant</button>
 	<button type="button" onclick="download()">Download All</button>
 </div>
 
@@ -100,7 +102,17 @@
 	let variants = 0;
 	let qrCodes = 0;
 
-	function addVariant()
+	function parseRawData()
+	{
+		let rawData = document.getElementById('rawDataInput').value;
+		let rows = rawData.split(', ');
+		for (i=0; i < rows.length; i++) {
+			rows[i] = rows[i].split(',');
+			addVariant(rows[i][0], rows[i][1]);
+		}
+	}
+
+	function addVariant(name, data)
 	{
 		variants++;
 		let id = variants;
@@ -122,6 +134,7 @@
 		let nameInput = document.createElement('input');
 		nameInput.id = "variant-" + id + "-name";
 		nameInput.type = "text";
+		nameInput.value = name;
 		leftColumn.appendChild(nameInput);
 
 		leftColumn.appendChild(document.createElement('br'));
@@ -134,6 +147,7 @@
 		let dataInput = document.createElement('input');
 		dataInput.id = "variant-" + id + "-data";
 		dataInput.type = "text";
+		dataInput.value = data;
 		dataInput.onchange = function() { generate(id); };
 		leftColumn.appendChild(dataInput);
 
