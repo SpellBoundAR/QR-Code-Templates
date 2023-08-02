@@ -1,0 +1,54 @@
+.container
+{
+	background: #ddd;
+	padding: 15px;
+	margin: 15px;
+}
+
+.qrCodeContainer
+{
+	background: #eee;
+	padding: 8px;
+	margin: 8px;
+}
+
+.label-column
+{
+	float: left;
+	width: 50px;
+}
+
+.value-column
+{
+	float: right;
+}
+
+.qr-source-container
+{
+	display: none;
+}
+
+.qrCode
+{
+	position: relative;
+}
+
+input
+{
+	min-width: 600px;
+}
+
+#page
+{
+	position: relative;
+	border: 1px solid black;
+	width: 11in;
+	height: 8in;
+}
+
+#preview
+{
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
