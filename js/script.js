@@ -1,6 +1,7 @@
 
 let variants = [];
 let qrCodes = 0;
+let namePlacements = []
 
 window.onload = function()
 {
@@ -145,6 +146,81 @@ function addQRCode()
 	document.getElementById('qrCodePlacements').appendChild(div);
 }
 
+function addNamePlacement()
+{
+	let id = 0;
+	do {
+		id = Math.floor(Math.random() * 99999999)
+	} while (namePlacements.includes(id));
+	namePlacements.push(id);
+
+	let div = document.createElement('div');
+	div.id = "variant-" + id;
+	div.setAttribute("data-id", id);
+	div.classList.add('namePlacement');
+
+	let sizeLabel = document.createElement('label');
+	sizeLabel.for = "namePlacementSize-" + id;
+	sizeLabel.innerHTML = "Font Size:";
+	sizeLabel.classList.add('label-column');
+	div.appendChild(sizeLabel);
+
+	let sizeInput = document.createElement('input');
+	sizeInput.id = "namePlacementSize-" + id;
+	sizeInput.type = "number";
+	sizeInput.step = 0.01;
+	sizeInput.min = 0;
+	sizeInput.onchange = function() { refresh(); };
+	div.appendChild(sizeInput);
+
+	div.appendChild(document.createElement('br'));
+
+	let xLabel = document.createElement('label');
+	xLabel.for = "namePlacementX-" + id;
+	xLabel.innerHTML = "X:";
+	xLabel.classList.add('label-column');
+	div.appendChild(xLabel);
+
+	let xInput = document.createElement('input');
+	xInput.id = "namePlacementX-" + id;
+	xInput.type = "number";
+	xInput.step = 0.01;
+	xInput.min = 0;
+	xInput.onchange = function() { refresh(); };
+	div.appendChild(xInput);
+
+	div.appendChild(document.createElement('br'));
+
+	let yLabel = document.createElement('label');
+	yLabel.for = "namePlacementY-" + id;
+	yLabel.innerHTML = "Y:";
+	yLabel.classList.add('label-column');
+	div.appendChild(yLabel);
+
+	let yInput = document.createElement('input');
+	yInput.id = "namePlacementY-" + id;
+	yInput.type = "number";
+	yInput.step = 0.01;
+	yInput.min = 0;
+	yInput.onchange = function() { refresh(); };
+	div.appendChild(yInput);
+
+	div.appendChild(document.createElement('br'));
+
+	let colorLabel = document.createElement('label');
+	colorLabel.for = "namePlacementColor-" + id;
+	colorLabel.innerHTML = "Color:";
+	colorLabel.classList.add('label-column');
+	div.appendChild(colorLabel);
+
+	let colorInput = document.createElement('input');
+	colorInput.id = "namePlacementColor-" + id;
+	colorInput.onchange = function() { refresh(); };
+	div.appendChild(colorInput);
+
+	document.getElementById('namePlacements').appendChild(div);
+}
+
 function generate(id)
 {
 	let dataID = "variant-" + id + "-data";
@@ -229,6 +305,8 @@ function downloadAll()
 
 function download(id)
 {
+	let variantName = document.getElementById("variant-" + id + "-name").value
+
 	let template = new Image();
 	template.src = document.getElementById('preview').getAttribute("src");
 	let templateFileType = template.src.split('.').pop();
@@ -250,6 +328,19 @@ function download(id)
 
 	pdf.addImage(template, templateFileType, 0, 0, documentWidth, documentHeight);
 
+	let namePlacementElements = document.getElementsByClassName("namePlacement");
+	for (let i = 0; i < namePlacementElements.length; i++)
+	{
+		let id = namePlacementElements[i].getAttribute("data-id");
+		let size = parseFloat(document.getElementById('namePlacementSize-' + id).value);
+		let x = parseFloat(document.getElementById('namePlacementX-' + id).value);
+		let y = parseFloat(document.getElementById('namePlacementY-' + id).value);
+		let color = document.getElementById('namePlacementColor-' + id).value
+		pdf.setFontSize(size);
+		pdf.setTextColor(color);
+		pdf.text(x, y, variantName);
+	}
+
 	for (let qrPlacement = 1; qrPlacement < qrCodes + 1; qrPlacement++)
 	{
 		let size = parseFloat(document.getElementById('qrCodeSize-' + qrPlacement).value);
@@ -258,6 +349,6 @@ function download(id)
 		pdf.addImage(qrcode, 'png', x, y, size, size);
 	}
 
-	let filename = document.getElementById("variant-" + id + "-name").value + '.pdf';
+	let filename = variantName + '.pdf';
 	pdf.save(filename);
 }
