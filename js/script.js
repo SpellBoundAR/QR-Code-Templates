@@ -1,7 +1,7 @@
 
 let variants = [];
 let qrCodes = 0;
-let namePlacements = []
+let namePlacements = 0;
 
 window.onload = function()
 {
@@ -88,137 +88,257 @@ function removeVariant(id)
 	document.getElementById("variant-" + id).remove();
 }
 
+function removeAllInspectors()
+{
+	let elements = document.getElementsByClassName("inspector");
+	for (let i = 0; i < elements.length; i++)
+	{
+		elements[i].remove();
+	}
+}
+
 function addQRCode()
 {
 	qrCodes++;
 	let id = qrCodes;
 
-	let div = document.createElement('div');
-	div.id = "qrCodePlacement-" + id;
-	div.classList.add('qrCodeContainer');
+	let qrCodePreview = document.createElement('div');
+	qrCodePreview.setAttribute("data-id", id);
+	qrCodePreview.id = "qr-code-preview-" + id;
+	qrCodePreview.classList.add('qr-code-preview');
+	qrCodePreview.setAttribute("data-x", 0);
+	qrCodePreview.setAttribute("data-y", 0);
+	qrCodePreview.setAttribute("data-size", 1);
+	qrCodePreview.style.left = "0in";
+	qrCodePreview.style.top = "0in";
+	qrCodePreview.style.width = "1in";
+	qrCodePreview.style.height = "1in";
+	qrCodePreview.onclick = function() { showQRInspector(qrCodePreview); };
+	document.getElementById('page').appendChild(qrCodePreview);
+
+	showQRInspector(qrCodePreview);
+}
+
+function removeQRCode(qrCodePreview)
+{
+	qrCodePreview.remove();
+	removeAllInspectors();
+}
+
+function showQRInspector(qrCodePreview)
+{
+	removeAllInspectors();
+
+	let id = qrCodePreview.getAttribute("data-id");
+	let x = qrCodePreview.getAttribute("data-x");
+	let y = qrCodePreview.getAttribute("data-y");
+	let size = qrCodePreview.getAttribute("data-size");
+
+	let inspector = document.createElement('div');
+	inspector.classList.add('inspector');
 
 	let sizeLabel = document.createElement('label');
-	sizeLabel.for = "qrCodeSize-" + id;
+	sizeLabel.for = "qr-code-size";
 	sizeLabel.innerHTML = "Size:";
 	sizeLabel.classList.add('label-column');
-	div.appendChild(sizeLabel);
+	inspector.appendChild(sizeLabel);
 
 	let sizeInput = document.createElement('input');
-	sizeInput.id = "qrCodeSize-" + id;
+	sizeInput.id = "qr-code-size";
 	sizeInput.type = "number";
 	sizeInput.step = 0.01;
 	sizeInput.min = 0;
-	sizeInput.onchange = function() { refresh(); };
-	div.appendChild(sizeInput);
+	sizeInput.value = size;
+	sizeInput.onchange = function() { updateSize(sizeInput, qrCodePreview); };
+	inspector.appendChild(sizeInput);
 
-	div.appendChild(document.createElement('br'));
+	inspector.appendChild(document.createElement('br'));
 
 	let xLabel = document.createElement('label');
-	xLabel.for = "qrCodeX-" + id;
+	xLabel.for = "qr-code-x";
 	xLabel.innerHTML = "X:";
 	xLabel.classList.add('label-column');
-	div.appendChild(xLabel);
+	inspector.appendChild(xLabel);
 
 	let xInput = document.createElement('input');
-	xInput.id = "qrCodeX-" + id;
+	xInput.id = "qr-code-x";
 	xInput.type = "number";
 	xInput.step = 0.01;
 	xInput.min = 0;
-	xInput.onchange = function() { refresh(); };
-	div.appendChild(xInput);
+	xInput.value = x;
+	xInput.onchange = function() { updateX(xInput, qrCodePreview); };
+	inspector.appendChild(xInput);
 
-	div.appendChild(document.createElement('br'));
+	inspector.appendChild(document.createElement('br'));
 
 	let yLabel = document.createElement('label');
-	yLabel.for = "qrCodeY-" + id;
+	yLabel.for = "qr-code-y";
 	yLabel.innerHTML = "Y:";
 	yLabel.classList.add('label-column');
-	div.appendChild(yLabel);
+	inspector.appendChild(yLabel);
 
 	let yInput = document.createElement('input');
-	yInput.id = "qrCodeY-" + id;
+	yInput.id = "qr-code-y";
 	yInput.type = "number";
 	yInput.step = 0.01;
 	yInput.min = 0;
-	yInput.onchange = function() { refresh(); };
-	div.appendChild(yInput);
+	yInput.value = y;
+	yInput.onchange = function() { updateY(yInput, qrCodePreview); };
+	inspector.appendChild(yInput);
 
-	document.getElementById('qrCodePlacements').appendChild(div);
+	inspector.appendChild(document.createElement('br'));
+
+	let deleteButton = document.createElement('input');
+	deleteButton.type = "button";
+	deleteButton.value = "Remove";
+	deleteButton.onclick = function() { removeQRCode(qrCodePreview); };
+	inspector.appendChild(deleteButton);
+
+	document.getElementById('preview-section').appendChild(inspector);
+}
+
+function updateX(dataSource, qrCodePreview)
+{
+	qrCodePreview.style.left = dataSource.value + "in";
+	qrCodePreview.setAttribute("data-x", dataSource.value);
+}
+
+function updateY(dataSource, qrCodePreview)
+{
+	qrCodePreview.style.top = dataSource.value + "in";
+	qrCodePreview.setAttribute("data-y", dataSource.value);
+}
+
+function updateSize(dataSource, qrCodePreview)
+{
+	qrCodePreview.style.width = dataSource.value + "in";
+	qrCodePreview.style.height = dataSource.value + "in";
+	qrCodePreview.setAttribute("data-size", dataSource.value);
 }
 
 function addNamePlacement()
 {
-	let id = 0;
-	do {
-		id = Math.floor(Math.random() * 99999999)
-	} while (namePlacements.includes(id));
-	namePlacements.push(id);
+	let id = namePlacements;
+	namePlacements++;
 
-	let div = document.createElement('div');
-	div.id = "variant-" + id;
-	div.setAttribute("data-id", id);
-	div.classList.add('namePlacement');
+	let namePlacement = document.createElement('div');
+	namePlacement.setAttribute("data-id", id);
+	namePlacement.id = "name-placement-preview-" + id;
+	namePlacement.classList.add('name-placement-preview');
+	namePlacement.setAttribute("data-x", 0);
+	namePlacement.setAttribute("data-y", 0);
+	namePlacement.setAttribute("data-size", 1);
+	namePlacement.setAttribute("data-color", "#000000");
+	namePlacement.style.left = "0in";
+	namePlacement.style.top = "0in";
+	namePlacement.innerHTML = "{{ NAME }}"
+	namePlacement.onclick = function() { showNameInspector(namePlacement); };
+	document.getElementById('page').appendChild(namePlacement);
+
+	showNameInspector(namePlacement);
+}
+
+function showNameInspector(namePlacement)
+{
+	removeAllInspectors();
+
+	let id = namePlacement.getAttribute("data-id");
+	let x = namePlacement.getAttribute("data-x");
+	let y = namePlacement.getAttribute("data-y");
+	let size = namePlacement.getAttribute("data-size");
+	let color = namePlacement.getAttribute("data-color");
+
+	let inspector = document.createElement('div');
+	inspector.classList.add('inspector');
 
 	let sizeLabel = document.createElement('label');
-	sizeLabel.for = "namePlacementSize-" + id;
+	sizeLabel.for = "namePlacementSize";
 	sizeLabel.innerHTML = "Font Size:";
 	sizeLabel.classList.add('label-column');
-	div.appendChild(sizeLabel);
+	inspector.appendChild(sizeLabel);
 
 	let sizeInput = document.createElement('input');
-	sizeInput.id = "namePlacementSize-" + id;
+	sizeInput.id = "namePlacementSize";
 	sizeInput.type = "number";
 	sizeInput.step = 0.01;
 	sizeInput.min = 0;
-	sizeInput.onchange = function() { refresh(); };
-	div.appendChild(sizeInput);
+	sizeInput.value = size;
+	sizeInput.onchange = function() { updateNamePlacementSize(sizeInput, namePlacement); };
+	inspector.appendChild(sizeInput);
 
-	div.appendChild(document.createElement('br'));
+	inspector.appendChild(document.createElement('br'));
 
 	let xLabel = document.createElement('label');
-	xLabel.for = "namePlacementX-" + id;
+	xLabel.for = "namePlacementX";
 	xLabel.innerHTML = "X:";
 	xLabel.classList.add('label-column');
-	div.appendChild(xLabel);
+	inspector.appendChild(xLabel);
 
 	let xInput = document.createElement('input');
-	xInput.id = "namePlacementX-" + id;
+	xInput.id = "namePlacementX";
 	xInput.type = "number";
 	xInput.step = 0.01;
 	xInput.min = 0;
-	xInput.onchange = function() { refresh(); };
-	div.appendChild(xInput);
+	xInput.value = x;
+	xInput.onchange = function() { updateNamePlacementX(xInput, namePlacement); };
+	inspector.appendChild(xInput);
 
-	div.appendChild(document.createElement('br'));
+	inspector.appendChild(document.createElement('br'));
 
 	let yLabel = document.createElement('label');
-	yLabel.for = "namePlacementY-" + id;
+	yLabel.for = "namePlacementY";
 	yLabel.innerHTML = "Y:";
 	yLabel.classList.add('label-column');
-	div.appendChild(yLabel);
+	inspector.appendChild(yLabel);
 
 	let yInput = document.createElement('input');
-	yInput.id = "namePlacementY-" + id;
+	yInput.id = "namePlacementY";
 	yInput.type = "number";
 	yInput.step = 0.01;
 	yInput.min = 0;
-	yInput.onchange = function() { refresh(); };
-	div.appendChild(yInput);
+	yInput.value = y;
+	yInput.onchange = function() { updateNamePlacementY(yInput, namePlacement); };
+	inspector.appendChild(yInput);
 
-	div.appendChild(document.createElement('br'));
+	inspector.appendChild(document.createElement('br'));
 
 	let colorLabel = document.createElement('label');
-	colorLabel.for = "namePlacementColor-" + id;
+	colorLabel.for = "namePlacementColor";
 	colorLabel.innerHTML = "Color:";
 	colorLabel.classList.add('label-column');
-	div.appendChild(colorLabel);
+	inspector.appendChild(colorLabel);
 
 	let colorInput = document.createElement('input');
-	colorInput.id = "namePlacementColor-" + id;
-	colorInput.onchange = function() { refresh(); };
-	div.appendChild(colorInput);
+	colorInput.id = "namePlacementColor";
+	colorInput.value = color;
+	colorInput.onchange = function() { updateNamePlacementColor(colorInput, namePlacement); };
+	inspector.appendChild(colorInput);
 
-	document.getElementById('namePlacements').appendChild(div);
+	document.getElementById('preview-section').appendChild(inspector);
+}
+
+function updateNamePlacementSize(dataSource, namePlacement)
+{
+	namePlacement.style.fontSize = dataSource.value + "pt";
+	namePlacement.setAttribute("data-size", dataSource.value);
+}
+
+function updateNamePlacementX(dataSource, namePlacement)
+{
+	namePlacement.style.left = dataSource.value + "in";
+	namePlacement.setAttribute("data-x", dataSource.value);
+}
+
+function updateNamePlacementY(dataSource, namePlacement)
+{
+	namePlacement.style.top = dataSource.value + "in";
+	namePlacement.setAttribute("data-y", dataSource.value);
+}
+
+function updateNamePlacementColor(dataSource, namePlacement)
+{
+	namePlacement.style.color = dataSource.value;
+	namePlacement.setAttribute("data-color", dataSource.value);
 }
 
 function generate(id)
@@ -266,31 +386,6 @@ function refresh()
 	let page = document.getElementById("page")
 	page.style.width = documentWidth + "in";
 	page.style.height = documentHeight + "in";
-
-	for (let i = 1; i < qrCodes + 1; i++)
-	{
-		let id = "qrCode-" + i;
-		var element = document.getElementById(id);
-		if (element !== null && element !== undefined)
-		{
-			element.parentNode.removeChild(element);
-		}
-	}
-
-	for (let i = 1; i < qrCodes + 1; i++)
-	{
-		let id = "qrCode-" + i;
-		let content = '<div id="' + id + '" style="background: #f00;"></div>';
-		let size = document.getElementById('qrCodeSize-' + i).value;
-		let x = document.getElementById('qrCodeX-' + i).value;
-		let y = document.getElementById('qrCodeY-' + i).value;
-		document.getElementById('page').innerHTML += content;
-		document.getElementById(id).style.position = "absolute";
-		document.getElementById(id).style.left = x + "in";
-		document.getElementById(id).style.top = y + "in";
-		document.getElementById(id).style.width = size + "in";
-		document.getElementById(id).style.height = size + "in";
-	}
 }
 
 function downloadAll()
@@ -328,24 +423,26 @@ function download(id)
 
 	pdf.addImage(template, templateFileType, 0, 0, documentWidth, documentHeight);
 
-	let namePlacementElements = document.getElementsByClassName("namePlacement");
-	for (let i = 0; i < namePlacementElements.length; i++)
+	let namePlacements = document.getElementsByClassName("name-placement-preview");
+	for (let i = 0; i < namePlacements.length; i++)
 	{
-		let id = namePlacementElements[i].getAttribute("data-id");
-		let size = parseFloat(document.getElementById('namePlacementSize-' + id).value);
-		let x = parseFloat(document.getElementById('namePlacementX-' + id).value);
-		let y = parseFloat(document.getElementById('namePlacementY-' + id).value);
-		let color = document.getElementById('namePlacementColor-' + id).value
+		let namePlacement = namePlacements[i];
+		let size = parseFloat(namePlacement.getAttribute('data-size'));
+		let x = parseFloat(namePlacement.getAttribute('data-x'));
+		let y = parseFloat(namePlacement.getAttribute('data-y'));
+		let color = namePlacement.getAttribute('data-color')
 		pdf.setFontSize(size);
 		pdf.setTextColor(color);
 		pdf.text(x, y, variantName);
 	}
 
-	for (let qrPlacement = 1; qrPlacement < qrCodes + 1; qrPlacement++)
+	let qrCodePlacements = document.getElementsByClassName("qr-code-preview");
+	for (let i = 0; i < qrCodePlacements.length; i++)
 	{
-		let size = parseFloat(document.getElementById('qrCodeSize-' + qrPlacement).value);
-		let x = parseFloat(document.getElementById('qrCodeX-' + qrPlacement).value);
-		let y = parseFloat(document.getElementById('qrCodeY-' + qrPlacement).value);
+		let qrCodePlacement = qrCodePlacements[i];
+		let size = parseFloat(qrCodePlacement.getAttribute('data-size'));
+		let x = parseFloat(qrCodePlacement.getAttribute('data-x'));
+		let y = parseFloat(qrCodePlacement.getAttribute('data-y'));
 		pdf.addImage(qrcode, 'png', x, y, size, size);
 	}
 

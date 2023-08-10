@@ -8,37 +8,44 @@
 </head>
 <body>
 
-	<h1>QR Code Inserter</h1>
-
-	<div id="documentSetup" class="container">
-		<p><b>Document Setup</b></p>
-		<label for="documentWidth">Width</label><br>
-		<input type="number" step="0.01" min="0" id="documentWidth"><br>
-		<label for="documentHeight">Height</label><br>
-		<input type="number" step="0.01" min="0" id="documentHeight"><br>
-		<input type="file" id="file" name="file" onchange="refreshTemplate()"><br>
+	<div id="title-section" class="section">
+			
+		<h1>QR Code Inserter</h1>
+	
 	</div>
 
-	<div id="variants" class="container">
-		<p><b>Variants</b></p>
-		<input id="rawDataInput" type="text">
-		<button type="button" onclick="parseRawData()">Parse Raw Data</button><br><br>
-		<button type="button" onclick="addVariant(null, null)">Add Export Variant</button>
-		<button type="button" onclick="downloadAll()">Download All</button>
+	<div id="settings-section" class="section">
+		
+		<div id="documentSetup" class="container">
+			<p><b>Document Setup</b></p>
+			<label for="documentWidth">Width</label><br>
+			<input type="number" step="0.01" min="0" id="documentWidth" onchange="refresh()"><br>
+			<label for="documentHeight">Height</label><br>
+			<input type="number" step="0.01" min="0" id="documentHeight" onchange="refresh()"><br>
+			<input type="file" id="file" name="file" onchange="refreshTemplate()"><br>
+		</div>
+
+		<div id="variants" class="container">
+			<p><b>Variants</b></p>
+			<input id="rawDataInput" type="text">
+			<button type="button" onclick="parseRawData()">Parse Raw Data</button><br><br>
+			<button type="button" onclick="addVariant(null, null)">Add Export Variant</button>
+			<button type="button" onclick="downloadAll()">Download All</button>
+		</div>
 	</div>
 
-	<div id="qrCodePlacements" class="container">
-		<p><b>QR Code Placements</b></p>
-		<button type="button" onclick="addQRCode()">Add QR Code Placement</button><br>
-	</div>
+	<div id="preview-section" class="section">
+		
+		<div id="preview-section-header">
+			Template Editor
+			<button type="button" onclick="addQRCode()">+QR</button><br>
+			<button type="button" onclick="addNamePlacement()">+Name</button><br>
+		</div>
 
-	<div id="namePlacements" class="container">
-		<p><b>Name Placements</b></p>
-		<button type="button" onclick="addNamePlacement()">Add Name Placement</button><br>
-	</div>
+		<div id="page">
+			<img id="preview" src="" alt="Image preview...">
+		</div>
 
-	<div id="page">
-		<img id="preview" src="" alt="Image preview...">
 	</div>
 
 </body>
