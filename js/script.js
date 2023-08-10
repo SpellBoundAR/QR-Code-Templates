@@ -511,19 +511,20 @@ function download(id)
 	let qrcode = new Image();
 	qrcode.src = document.querySelector('#variant-' + id + '-source img').getAttribute("src");
 
-	let documentWidth = parseFloat(document.getElementById('documentWidth').value);
-	let documentHeight = parseFloat(document.getElementById('documentHeight').value);
+	page = document.getElementById('page')
+	let width = page.getAttribute("data-width");
+	let height = page.getAttribute("data-height");
 
 	let pdf = new jsPDF({
 		orientation: 'portrait',
 		unit: 'in',
-		format: [documentWidth, documentHeight]
+		format: [width, height]
 	});
 
-	documentWidth = pdf.internal.pageSize.width;
-	documentHeight = pdf.internal.pageSize.height;
+	width = pdf.internal.pageSize.width;
+	height = pdf.internal.pageSize.height;
 
-	pdf.addImage(template, templateFileType, 0, 0, documentWidth, documentHeight);
+	pdf.addImage(template, templateFileType, 0, 0, width, height);
 
 	let namePlacements = document.getElementsByClassName("name-placement-preview");
 	for (let i = 0; i < namePlacements.length; i++)
