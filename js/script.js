@@ -512,8 +512,8 @@ function download(id)
 	qrcode.src = document.querySelector('#variant-' + id + '-source img').getAttribute("src");
 
 	page = document.getElementById('page')
-	let width = page.getAttribute("data-width");
-	let height = page.getAttribute("data-height");
+	let width = parseFloat(page.getAttribute("data-width"));
+	let height = parseFloat(page.getAttribute("data-height"));
 
 	let pdf = new jsPDF({
 		orientation: 'portrait',
