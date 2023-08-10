@@ -5,8 +5,8 @@ let namePlacements = 0;
 
 window.onload = function()
 {
-	document.getElementById('documentWidth').value = 8.5;
-	document.getElementById('documentHeight').value = 11;
+	updatePageDimensions();
+	showPageInspector();
 };
 
 function parseRawData()
@@ -69,14 +69,16 @@ function addVariant(name, data)
 
 	let downloadButton = document.createElement('button');
 	downloadButton.type = "button";
+	downloadButton.classList.add("variant-download-button");
 	downloadButton.onclick = function() { download(id); };
-	downloadButton.innerHTML = "Download";
+	downloadButton.innerHTML = "Get";
 	div.appendChild(downloadButton);
 
 	let removeButton = document.createElement('button');
 	removeButton.type = "button";
+	removeButton.classList.add("variant-remove-button");
 	removeButton.onclick = function() { removeVariant(id); };
-	removeButton.innerHTML = "Remove";
+	removeButton.innerHTML = "X";
 	div.appendChild(removeButton);
 
 	document.getElementById('variants').appendChild(div);
@@ -86,6 +88,90 @@ function addVariant(name, data)
 function removeVariant(id)
 {
 	document.getElementById("variant-" + id).remove();
+}
+
+function updatePageDimensions()
+{
+	page = document.getElementById('page')
+	let width = page.getAttribute("data-width");
+	let height = page.getAttribute("data-height");
+	page.style.width = width + "in";
+	page.style.height = height + "in";
+}
+
+function showPageInspector()
+{
+	removeAllInspectors();
+
+	page = document.getElementById('page')
+
+	let width = page.getAttribute("data-width");
+	let height = page.getAttribute("data-height");
+
+	let inspector = document.createElement('div');
+	inspector.classList.add('inspector');
+
+	let widthLabel = document.createElement('label');
+	widthLabel.for = "document-width";
+	widthLabel.innerHTML = "Width:";
+	widthLabel.classList.add('label-column');
+	inspector.appendChild(widthLabel);
+
+	let widthInput = document.createElement('input');
+	widthInput.id = "document-width";
+	widthInput.type = "number";
+	widthInput.step = 0.01;
+	widthInput.min = 0;
+	widthInput.value = width;
+	widthInput.onchange = function() { updateWidth(widthInput, page); };
+	inspector.appendChild(widthInput);
+
+	inspector.appendChild(document.createElement('br'));
+
+	let heightLabel = document.createElement('label');
+	heightLabel.for = "document-height";
+	heightLabel.innerHTML = "Height:";
+	heightLabel.classList.add('label-column');
+	inspector.appendChild(heightLabel);
+
+	let heightInput = document.createElement('input');
+	heightInput.id = "document-height";
+	heightInput.type = "number";
+	heightInput.step = 0.01;
+	heightInput.min = 0;
+	heightInput.value = height;
+	heightInput.onchange = function() { updateHeight(heightInput, page); };
+	inspector.appendChild(heightInput);
+
+	inspector.appendChild(document.createElement('br'));
+
+	let backgroundInput = document.createElement('input');
+	backgroundInput.id = "document-background";
+	backgroundInput.type = "file";
+	backgroundInput.onchange = function() { refreshTemplate(); };
+	inspector.appendChild(backgroundInput);
+
+	inspector.appendChild(document.createElement('br'));
+
+	let hideButton = document.createElement('input');
+	hideButton.type = "button";
+	hideButton.value = "Done";
+	hideButton.onclick = function() { removeAllInspectors(); };
+	inspector.appendChild(hideButton);
+
+	document.getElementById('preview-section').appendChild(inspector);
+}
+
+function updateWidth(dataSource, page)
+{
+	page.style.width = dataSource.value + "in";
+	page.setAttribute("data-width", dataSource.value);
+}
+
+function updateHeight(dataSource, page)
+{
+	page.style.height = dataSource.value + "in";
+	page.setAttribute("data-height", dataSource.value);
 }
 
 function removeAllInspectors()
@@ -122,7 +208,7 @@ function addQRCode()
 function removeQRCode(qrCodePreview)
 {
 	qrCodePreview.remove();
-	removeAllInspectors();
+	showPageInspector();
 }
 
 function showQRInspector(qrCodePreview)
@@ -188,6 +274,12 @@ function showQRInspector(qrCodePreview)
 
 	inspector.appendChild(document.createElement('br'));
 
+	let hideButton = document.createElement('input');
+	hideButton.type = "button";
+	hideButton.value = "Done";
+	hideButton.onclick = function() { showPageInspector(); };
+	inspector.appendChild(hideButton);
+
 	let deleteButton = document.createElement('input');
 	deleteButton.type = "button";
 	deleteButton.value = "Remove";
@@ -236,6 +328,12 @@ function addNamePlacement()
 	document.getElementById('page').appendChild(namePlacement);
 
 	showNameInspector(namePlacement);
+}
+
+function removeNamePlacement(namePlacement)
+{
+	namePlacement.remove();
+	showPageInspector();
 }
 
 function showNameInspector(namePlacement)
@@ -314,6 +412,20 @@ function showNameInspector(namePlacement)
 	colorInput.onchange = function() { updateNamePlacementColor(colorInput, namePlacement); };
 	inspector.appendChild(colorInput);
 
+	inspector.appendChild(document.createElement('br'));
+
+	let hideButton = document.createElement('input');
+	hideButton.type = "button";
+	hideButton.value = "Done";
+	hideButton.onclick = function() { showPageInspector(); };
+	inspector.appendChild(hideButton);
+
+	let deleteButton = document.createElement('input');
+	deleteButton.type = "button";
+	deleteButton.value = "Remove";
+	deleteButton.onclick = function() { removeNamePlacement(namePlacement); };
+	inspector.appendChild(deleteButton);
+
 	document.getElementById('preview-section').appendChild(inspector);
 }
 
@@ -376,16 +488,6 @@ function refreshTemplate()
 		reader.readAsDataURL(file);
 	} 
 	else preview.src = "";
-}
-
-function refresh()
-{
-	let documentWidth = parseFloat(document.getElementById('documentWidth').value);
-	let documentHeight = parseFloat(document.getElementById('documentHeight').value);
-
-	let page = document.getElementById("page")
-	page.style.width = documentWidth + "in";
-	page.style.height = documentHeight + "in";
 }
 
 function downloadAll()

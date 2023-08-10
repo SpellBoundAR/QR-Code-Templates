@@ -15,34 +15,29 @@
 	</div>
 
 	<div id="settings-section" class="section">
-		
-		<div id="documentSetup" class="container">
-			<p><b>Document Setup</b></p>
-			<label for="documentWidth">Width</label><br>
-			<input type="number" step="0.01" min="0" id="documentWidth" onchange="refresh()"><br>
-			<label for="documentHeight">Height</label><br>
-			<input type="number" step="0.01" min="0" id="documentHeight" onchange="refresh()"><br>
-			<input type="file" id="file" name="file" onchange="refreshTemplate()"><br>
+
+		<div id="preview-section-header">
+			<h2>Export Variants</h2>
+			<button type="button" class="header-button" id="add-variant-button" onclick="addVariant(null, null)">Add Export Variant</button>
+			<button type="button" class="header-button" id="download-all-button" onclick="downloadAll()">Download All</button>
 		</div>
 
-		<div id="variants" class="container">
-			<p><b>Variants</b></p>
+		<div id="variants">
 			<input id="rawDataInput" type="text">
 			<button type="button" onclick="parseRawData()">Parse Raw Data</button><br><br>
-			<button type="button" onclick="addVariant(null, null)">Add Export Variant</button>
-			<button type="button" onclick="downloadAll()">Download All</button>
 		</div>
+
 	</div>
 
 	<div id="preview-section" class="section">
 		
 		<div id="preview-section-header">
-			Template Editor
-			<button type="button" onclick="addQRCode()">+QR</button><br>
-			<button type="button" onclick="addNamePlacement()">+Name</button><br>
+			<h2>Template Editor</h2>
+			<button type="button" class="header-button" id="qr-button" onclick="addQRCode()">+QR</button><br>
+			<button type="button" class="header-button" id="name-button" onclick="addNamePlacement()">+Name</button><br>
 		</div>
 
-		<div id="page">
+		<div id="page" data-width="8.5" data-height="11">
 			<img id="preview" src="" alt="Image preview...">
 		</div>
 
