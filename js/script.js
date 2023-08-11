@@ -9,16 +9,6 @@ window.onload = function()
 	showPageInspector();
 };
 
-function parseRawData()
-{
-	let rawData = document.getElementById('rawDataInput').value;
-	let rows = rawData.split(', ');
-	for (i=0; i < rows.length; i++) {
-		rows[i] = rows[i].split(',');
-		addVariant(rows[i][0], rows[i][1]);
-	}
-}
-
 function addVariant(name, data)
 {
 	let id = 0;
@@ -67,19 +57,25 @@ function addVariant(name, data)
 	sourceDiv.classList.add('qr-source-container');
 	div.appendChild(sourceDiv);
 
-	let downloadButton = document.createElement('button');
-	downloadButton.type = "button";
+	let downloadButton = document.createElement('div');
+	downloadButton.classList.add("variant-button");
+	downloadButton.classList.add("image-button");
 	downloadButton.classList.add("variant-download-button");
 	downloadButton.onclick = function() { download(id); };
-	downloadButton.innerHTML = "Get";
 	div.appendChild(downloadButton);
+	let downloadButtonIcon = document.createElement('img');
+	downloadButtonIcon.src = "./img/download.png";
+	downloadButton.appendChild(downloadButtonIcon);
 
-	let removeButton = document.createElement('button');
-	removeButton.type = "button";
+	let removeButton = document.createElement('div');
+	removeButton.classList.add("variant-button");
+	removeButton.classList.add("image-button");
 	removeButton.classList.add("variant-remove-button");
 	removeButton.onclick = function() { removeVariant(id); };
-	removeButton.innerHTML = "X";
 	div.appendChild(removeButton);
+	let removeButtonIcon = document.createElement('img');
+	removeButtonIcon.src = "./img/trash.png";
+	removeButton.appendChild(removeButtonIcon);
 
 	document.getElementById('variants').appendChild(div);
 	generate(id);
@@ -176,10 +172,15 @@ function updateHeight(dataSource, page)
 
 function removeAllInspectors()
 {
-	let elements = document.getElementsByClassName("inspector");
-	for (let i = 0; i < elements.length; i++)
+	let inspectors = document.getElementsByClassName("inspector");
+	for (let i = 0; i < inspectors.length; i++)
 	{
-		elements[i].remove();
+		inspectors[i].remove();
+	}
+	let previews = document.getElementsByClassName("preview");
+	for (let i = 0; i < previews.length; i++)
+	{
+		previews[i].classList.remove("active");
 	}
 }
 
@@ -191,6 +192,7 @@ function addQRCode()
 	let qrCodePreview = document.createElement('div');
 	qrCodePreview.setAttribute("data-id", id);
 	qrCodePreview.id = "qr-code-preview-" + id;
+	qrCodePreview.classList.add('preview');
 	qrCodePreview.classList.add('qr-code-preview');
 	qrCodePreview.setAttribute("data-x", 0);
 	qrCodePreview.setAttribute("data-y", 0);
@@ -214,6 +216,8 @@ function removeQRCode(qrCodePreview)
 function showQRInspector(qrCodePreview)
 {
 	removeAllInspectors();
+
+	qrCodePreview.classList.add("active");
 
 	let id = qrCodePreview.getAttribute("data-id");
 	let x = qrCodePreview.getAttribute("data-x");
@@ -316,13 +320,16 @@ function addNamePlacement()
 	let namePlacement = document.createElement('div');
 	namePlacement.setAttribute("data-id", id);
 	namePlacement.id = "name-placement-preview-" + id;
+	namePlacement.classList.add('preview');
 	namePlacement.classList.add('name-placement-preview');
 	namePlacement.setAttribute("data-x", 0);
 	namePlacement.setAttribute("data-y", 0);
-	namePlacement.setAttribute("data-size", 1);
+	namePlacement.setAttribute("data-size", 12);
 	namePlacement.setAttribute("data-color", "#000000");
+	namePlacement.style.fontSize = "12pt";
 	namePlacement.style.left = "0in";
 	namePlacement.style.top = "0in";
+	namePlacement.style.color = "#000000";
 	namePlacement.innerHTML = "{{ NAME }}"
 	namePlacement.onclick = function() { showNameInspector(namePlacement); };
 	document.getElementById('page').appendChild(namePlacement);
@@ -339,6 +346,8 @@ function removeNamePlacement(namePlacement)
 function showNameInspector(namePlacement)
 {
 	removeAllInspectors();
+
+	namePlacement.classList.add("active");
 
 	let id = namePlacement.getAttribute("data-id");
 	let x = namePlacement.getAttribute("data-x");

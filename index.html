@@ -2,9 +2,14 @@
 <html>
 <head>
 	<link rel="stylesheet" href="css/style.css">
+	<style>
+	@import url('https://fonts.googleapis.com/css2?family=Asap:wght@100&family=Raleway:wght@700&family=Roboto&display=swap');
+	</style>
 	<script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
 	<script type="text/javascript" src="js/script.js"> </script>
+	<script type="text/javascript" src="js/import.js"> </script>
+	<script type="text/javascript" src="js/zoom.js"> </script>
 </head>
 <body>
 
@@ -14,33 +19,36 @@
 	
 	</div>
 
-	<div id="settings-section" class="section">
-
-		<div id="preview-section-header">
-			<h2>Export Variants</h2>
-			<button type="button" class="header-button" id="add-variant-button" onclick="addVariant(null, null)">Add Export Variant</button>
-			<button type="button" class="header-button" id="download-all-button" onclick="downloadAll()">Download All</button>
-		</div>
-
-		<div id="variants">
-			<input id="rawDataInput" type="text">
-			<button type="button" onclick="parseRawData()">Parse Raw Data</button><br><br>
-		</div>
-
-	</div>
-
 	<div id="preview-section" class="section">
-		
-		<div id="preview-section-header">
+		<div class="section-header">
 			<h2>Template Editor</h2>
 			<button type="button" class="header-button" id="qr-button" onclick="addQRCode()">+QR</button><br>
 			<button type="button" class="header-button" id="name-button" onclick="addNamePlacement()">+Name</button><br>
 		</div>
-
+		<img id="zoom-in" class="zoom-button image-button" src="./img/zoom-in.png" onclick="zoomIn()">
+		<img id="zoom-out" class="zoom-button image-button" src="./img/zoom-out.png" onclick="zoomOut()">
 		<div id="page" data-width="8.5" data-height="11">
 			<img id="preview" src="" alt="Image preview...">
 		</div>
+	</div>
 
+	<div id="settings-section" class="section">
+		<div class="section-header">
+			<h2>Export Variants</h2>
+			<!--<button type="button" class="header-button" id="import-button" onclick="showImport()">Import</button><br>-->
+			<button type="button" class="header-button" id="add-variant-button" onclick="addVariant(null, null)">Add Export Variant</button>
+			<button type="button" class="header-button" id="download-all-button" onclick="downloadAll()">Download All</button>
+		</div>
+		<div id="variants">
+		</div>
+	</div>
+
+	<div id="import">
+		<div id="import-modal">
+			<button id="import-close" type="button" onclick="hideImport()">Close</button><br><br>
+			<textarea id="import-data"></textarea>
+			<button id="import-submit" type="button" onclick="submitImport()">Import</button><br><br>
+		</div>
 	</div>
 
 </body>
