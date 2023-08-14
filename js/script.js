@@ -6,7 +6,6 @@ let namePlacements = 0;
 window.onload = function()
 {
 	updatePageDimensions();
-	showPageInspector();
 };
 
 function addVariant(name, data)
@@ -222,7 +221,7 @@ function addQRCode()
 function removeQRCode(qrCodePreview)
 {
 	qrCodePreview.remove();
-	showPageInspector();
+	removeAllInspectors();
 }
 
 function showQRInspector(qrCodePreview)
@@ -293,7 +292,7 @@ function showQRInspector(qrCodePreview)
 	let hideButton = document.createElement('input');
 	hideButton.type = "button";
 	hideButton.value = "Done";
-	hideButton.onclick = function() { showPageInspector(); };
+	hideButton.onclick = function() { removeAllInspectors(); };
 	inspector.appendChild(hideButton);
 
 	let deleteButton = document.createElement('input');
@@ -352,7 +351,7 @@ function addNamePlacement()
 function removeNamePlacement(namePlacement)
 {
 	namePlacement.remove();
-	showPageInspector();
+	removeAllInspectors();
 }
 
 function showNameInspector(namePlacement)
@@ -438,7 +437,7 @@ function showNameInspector(namePlacement)
 	let hideButton = document.createElement('input');
 	hideButton.type = "button";
 	hideButton.value = "Done";
-	hideButton.onclick = function() { showPageInspector(); };
+	hideButton.onclick = function() { removeAllInspectors(); };
 	inspector.appendChild(hideButton);
 
 	let deleteButton = document.createElement('input');

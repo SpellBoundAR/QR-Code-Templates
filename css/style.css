@@ -230,6 +230,11 @@ body
 	top: 1vh;
 }
 
+#settings-button
+{
+	left: 67%;
+}
+
 #qr-button
 {
 	left: 89%;
