@@ -300,3 +300,13 @@ body
 	left: 30%;
 	bottom: 5%;
 }
+
+#no-variants
+{
+	position: absolute;
+	text-align: center;
+	color: #888;
+  	top: 200px;
+  	left: 50%;
+  	transform: translate(-50%, -50%);
+}

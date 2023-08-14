@@ -79,11 +79,23 @@ function addVariant(name, data)
 
 	document.getElementById('variants').appendChild(div);
 	generate(id);
+	updateNoVariants();
 }
 
 function removeVariant(id)
 {
 	document.getElementById("variant-" + id).remove();
+	updateNoVariants();
+}
+
+function updateNoVariants()
+{
+	let allVariants = document.getElementsByClassName("variant");
+	if (allVariants.length == 0)
+	{
+		document.getElementById("no-variants").style.display = "block";
+	}
+	else document.getElementById("no-variants").style.display = "none";
 }
 
 function updatePageDimensions()
