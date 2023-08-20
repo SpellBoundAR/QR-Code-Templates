@@ -5,6 +5,14 @@ body
 	overflow: hidden;
 }
 
+#logo
+{
+	position: absolute;
+	left: 20px;
+	top: 1vh;
+	height: 6vh;
+}
+
 .label-column
 {
 	float: left;
